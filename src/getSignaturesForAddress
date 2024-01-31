@@ -1,0 +1,11 @@
+import { PublicKey } from '@solana/web3.js'
+import { connection } from '../config'
+
+// export default async function getSignaturesForAddress(pubkey: PublicKey, limit: number) {
+//   return connection.getSignaturesForAddress(pubkey, { limit })
+// }
+
+const getSignaturesForAddress = async (pubkey: PublicKey, limit: number) =>
+  connection.getSignaturesForAddress(pubkey, { limit })
+
+export default getSignaturesForAddress

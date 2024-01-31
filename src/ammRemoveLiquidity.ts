@@ -1,24 +1,18 @@
-import assert from 'assert';
+import assert from 'assert'
 
 import {
   jsonInfo2PoolKeys,
   Liquidity,
   LiquidityPoolKeys,
-  TokenAmount
-} from '@raydium-io/raydium-sdk';
-import { Keypair } from '@solana/web3.js';
+  Token,
+  TOKEN_PROGRAM_ID,
+  TokenAmount,
+} from '@raydium-io/raydium-sdk'
+import { Keypair, PublicKey } from '@solana/web3.js'
 
-import {
-  connection,
-  DEFAULT_TOKEN,
-  makeTxVersion,
-  wallet
-} from '../config';
-import { formatAmmKeysById } from './formatAmmKeysById';
-import {
-  buildAndSendTx,
-  getWalletTokenAccount,
-} from './util';
+import { connection, DEFAULT_TOKEN, makeTxVersion, wallet } from '../config'
+import { formatAmmKeysById } from './formatAmmKeysById'
+import { buildAndSendTx, getWalletTokenAccount } from './util'
 
 type WalletTokenAccounts = Awaited<ReturnType<typeof getWalletTokenAccount>>
 type TestTxInputInfo = {
@@ -50,12 +44,15 @@ async function ammRemoveLiquidity(input: TestTxInputInfo) {
   return { txids: await buildAndSendTx(removeLiquidityInstructionResponse.innerTransactions) }
 }
 
-async function howToUse() {
-  const lpToken = DEFAULT_TOKEN['RAY_USDC-LP'] // LP
-  const removeLpTokenAmount = new TokenAmount(lpToken, 100)
-  const targetPool = 'EVzLJhqMtdC1nPmz8rNd6xGfVjDPxpLZgq7XJuNfMZ6' // RAY-USDC pool
-  const walletTokenAccounts = await getWalletTokenAccount(connection, wallet.publicKey)
+let lpToken = DEFAULT_TOKEN['RAY_USDC-LP'] // LP
+let targetPool = 'EVzLJhqMtdC1nPmz8rNd6xGfVjDPxpLZgq7XJuNfMZ6' // RAY-USDC pool
+let t1PubKey = new PublicKey('HLXX6wdcR9nrxMwo2iSiozWpLdVHx3FWviDM2M3tF4Yf') //Replace LP token ca
+lpToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, '', '')
+targetPool = 'Hev8eETZLtbZ8WmB8s9ThxVmh6ZuUsrs2yBT2dr3gmMP' // Replace Pool ID
+const removeLpTokenAmount = new TokenAmount(lpToken, 3605550275463) // Replace token amt
 
+async function howToUse() {
+  const walletTokenAccounts = await getWalletTokenAccount(connection, wallet.publicKey)
   ammRemoveLiquidity({
     removeLpTokenAmount,
     targetPool,
@@ -64,5 +61,7 @@ async function howToUse() {
   }).then(({ txids }) => {
     /** continue with txids */
     console.log('txids', txids)
+    console.log(`https://solscan.io/tx/${txids}`)
   })
 }
+howToUse()

@@ -1,0 +1,11 @@
+yarn build && yarn start js/src/parsePoolInfo.js
+yarn build && yarn start js/src/swapOnlyAmm.js
+yarn build && yarn start js/src/ammAddLiquidity.js
+yarn build && yarn start js/src/ammRemoveLiquidity.js
+yarn build && yarn start js/src/ammCreatePool.js
+yarn build && yarn start js/src/parsePoolInfo.js
+yarn build && yarn start js/src/burn.js
+yarn build && yarn start js/src/getLPTransactionDetailExec.js
+
+yarn start js/src/parsePoolInfo.js
+while true ; do yarn start js/src/parsePoolInfo.js ; done

@@ -1,26 +1,11 @@
-import { BN } from 'bn.js';
+import { BN } from 'bn.js'
 
-import {
-  Liquidity,
-  MAINNET_PROGRAM_ID,
-  Token,
-} from '@raydium-io/raydium-sdk';
-import {
-  Keypair,
-  PublicKey,
-} from '@solana/web3.js';
+import { Liquidity, MAINNET_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@raydium-io/raydium-sdk'
+import { Keypair, PublicKey } from '@solana/web3.js'
 
-import {
-  connection,
-  DEFAULT_TOKEN,
-  makeTxVersion,
-  PROGRAMIDS,
-  wallet,
-} from '../config';
-import {
-  buildAndSendTx,
-  getWalletTokenAccount,
-} from './util';
+import { connection, DEFAULT_TOKEN, makeTxVersion, PROGRAMIDS, wallet } from '../config'
+import { buildAndSendTx, getWalletTokenAccount } from './util'
+import getLPTransactionDetail from './getLPTransactionDetail'
 
 const ZERO = new BN(0)
 type BN = typeof ZERO
@@ -92,12 +77,19 @@ async function ammCreatePool(input: TestTxInputInfo): Promise<{ txids: string[] 
 }
 
 async function howToUse() {
-  const baseToken = DEFAULT_TOKEN.USDC // USDC
-  const quoteToken = DEFAULT_TOKEN.RAY // RAY
-  const targetMargetId = Keypair.generate().publicKey
-  const addBaseAmount = new BN(10000) // 10000 / 10 ** 6,
-  const addQuoteAmount = new BN(10000) // 10000 / 10 ** 6,
-  const startTime = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 // start from 7 days later
+  let baseToken = DEFAULT_TOKEN.USDC // USDC
+  let quoteToken = DEFAULT_TOKEN.RAY // RAY
+  let targetMargetId = Keypair.generate().publicKey
+
+  targetMargetId = new PublicKey('5yPThK3qTq2tas3HsBYTYqBc3CLCASTz4vWZysAiPBcH') //replace market id
+  let t1PubKey = new PublicKey('Jy4opX8AyEBpr1ts2C4i2apMUoxup9qn9R8ypsboxYa') //replace base token, //wallet secret key
+  let addBaseAmount = new BN(1000000000e6) // 10000 / 10 ** 6,  //replace amt
+  let addQuoteAmount = new BN(13e9) // 10000 / 10 ** 6,  //replace sol
+  const startTime = Math.floor(Date.now() / 1000) + 100 //replace time
+  baseToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'BASE', 'BASE')
+  quoteToken = DEFAULT_TOKEN.WSOL
+
+  // const startTime = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 // start from 7 days later
   const walletTokenAccounts = await getWalletTokenAccount(connection, wallet.publicKey)
 
   /* do something with start price if needed */
@@ -121,6 +113,14 @@ async function howToUse() {
     walletTokenAccounts,
   }).then(({ txids }) => {
     /** continue with txids */
+    const txid = txids[0]
     console.log('txids', txids)
+    console.log(`https://solscan.io/tx/${txids}`)
+    // if (txid)
+    //   setTimeout(() => {
+    //     getLPTransactionDetail(`${txid}`).then((d) => console.log(d))
+    //   }, 15000)
   })
 }
+
+howToUse()

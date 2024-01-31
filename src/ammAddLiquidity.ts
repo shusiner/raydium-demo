@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'assert'
 
 import {
   CurrencyAmount,
@@ -7,22 +7,15 @@ import {
   LiquidityPoolKeys,
   Percent,
   Token,
-  TokenAmount
-} from '@raydium-io/raydium-sdk';
-import { Keypair } from '@solana/web3.js';
+  TOKEN_PROGRAM_ID,
+  TokenAmount,
+} from '@raydium-io/raydium-sdk'
+import { Keypair, PublicKey } from '@solana/web3.js'
 
-import Decimal from 'decimal.js';
-import {
-  connection,
-  DEFAULT_TOKEN,
-  makeTxVersion,
-  wallet
-} from '../config';
-import { formatAmmKeysById } from './formatAmmKeysById';
-import {
-  buildAndSendTx,
-  getWalletTokenAccount,
-} from './util';
+import Decimal from 'decimal.js'
+import { connection, DEFAULT_TOKEN, makeTxVersion, wallet } from '../config'
+import { formatAmmKeysById } from './formatAmmKeysById'
+import { buildAndSendTx, getWalletTokenAccount } from './util'
 
 type WalletTokenAccounts = Awaited<ReturnType<typeof getWalletTokenAccount>>
 type TestTxInputInfo = {
@@ -75,11 +68,16 @@ async function ammAddLiquidity(
   return { txids: await buildAndSendTx(addLiquidityInstructionResponse.innerTransactions), anotherAmount }
 }
 
+let baseToken = DEFAULT_TOKEN.USDC // USDC
+let quoteToken = DEFAULT_TOKEN.RAY // RAY
+let targetPool = 'EVzLJhqMtdC1nPmz8rNd6xGfVjDPxpLZgq7XJuNfMZ6' // RAY-USDC pool
+let t1PubKey = new PublicKey('9gwTegFJJErDpWJKjPfLr2g2zrE3nL1v5zpwbtsk3c6P')
+baseToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 9, 'A Gently Used 2001 Honda Civic', 'USEDCAR')
+quoteToken = DEFAULT_TOKEN.WSOL
+targetPool = 'Cf628kRZSmUb5VZf6KGpRDRRxWRT8b4vLuYPEtLs73WD'
+
 async function howToUse() {
-  const baseToken = DEFAULT_TOKEN.USDC // USDC
-  const quoteToken = DEFAULT_TOKEN.RAY // RAY
-  const targetPool = 'EVzLJhqMtdC1nPmz8rNd6xGfVjDPxpLZgq7XJuNfMZ6' // RAY-USDC pool
-  const inputTokenAmount = new TokenAmount(baseToken, 100)
+  const inputTokenAmount = new TokenAmount(baseToken, 10000)
   const slippage = new Percent(1, 100)
   const walletTokenAccounts = await getWalletTokenAccount(connection, wallet.publicKey)
 
@@ -93,6 +91,10 @@ async function howToUse() {
     wallet: wallet,
   }).then(({ txids, anotherAmount }) => {
     /** continue with txids */
+    console.log(anotherAmount)
     console.log('txids', txids)
+    console.log(`https://solscan.io/tx/${txids}`)
   })
 }
+
+howToUse()

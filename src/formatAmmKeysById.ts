@@ -4,13 +4,11 @@ import {
   Liquidity,
   MARKET_STATE_LAYOUT_V3,
   Market,
-  SPL_MINT_LAYOUT
-} from '@raydium-io/raydium-sdk';
-import {
-  PublicKey
-} from '@solana/web3.js';
+  SPL_MINT_LAYOUT,
+} from '@raydium-io/raydium-sdk'
+import { PublicKey } from '@solana/web3.js'
 
-import { connection } from '../config';
+import { connection } from '../config'
 
 export async function formatAmmKeysById(id: string): Promise<ApiPoolInfoV4> {
   const account = await connection.getAccountInfo(new PublicKey(id))
@@ -47,12 +45,15 @@ export async function formatAmmKeysById(id: string): Promise<ApiPoolInfoV4> {
     marketVersion: 3,
     marketProgramId: info.marketProgramId.toString(),
     marketId: info.marketId.toString(),
-    marketAuthority: Market.getAssociatedAuthority({ programId: info.marketProgramId, marketId: info.marketId }).publicKey.toString(),
+    marketAuthority: Market.getAssociatedAuthority({
+      programId: info.marketProgramId,
+      marketId: info.marketId,
+    }).publicKey.toString(),
     marketBaseVault: marketInfo.baseVault.toString(),
     marketQuoteVault: marketInfo.quoteVault.toString(),
     marketBids: marketInfo.bids.toString(),
     marketAsks: marketInfo.asks.toString(),
     marketEventQueue: marketInfo.eventQueue.toString(),
-    lookupTableAccount: PublicKey.default.toString()
+    lookupTableAccount: PublicKey.default.toString(),
   }
 }
