@@ -1,6 +1,19 @@
 import { PublicKey } from '@solana/web3.js'
-import { connection } from '../config'
-import { Token, TOKEN_PROGRAM_ID } from '@raydium-io/raydium-sdk'
+import { connection, rpcUrl } from '../config'
+import {
+  getAccount,
+  getExtensionData,
+  getImmutableOwner,
+  getMint,
+  ExtensionType,
+  TOKEN_PROGRAM_ID,
+} from '@solana/spl-token'
+import { fetchDigitalAsset, mplTokenMetadata } from '@metaplex-foundation/mpl-token-metadata'
+import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
+import { publicKey } from '@metaplex-foundation/umi'
+
+// Use the RPC endpoint of your choice.
+const umi = createUmi(rpcUrl).use(mplTokenMetadata())
 
 export async function getTotalTokenSupply(tokenMintAddress: string) {
   const mintPublicKey = new PublicKey(tokenMintAddress)
@@ -14,30 +27,66 @@ export async function getTotalTokenSupply(tokenMintAddress: string) {
 }
 
 export async function getTotalInfo(tokenMintAddress: string) {
-  const mintPublicKey = new PublicKey(tokenMintAddress)
+  //   const mintPublicKey = new PublicKey(tokenMintAddress)
 
   try {
-    const mintInfo = await connection.getAccountInfo(mintPublicKey)
-    if (!mintInfo) {
-      throw new Error('Mint not found')
-    }
-    console.log(mintInfo.data)
+    // const mintInfo = await connection.getAccountInfo(mintPublicKey)
+    // const mint1 = await getMint(connection, mintPublicKey, 'confirmed', TOKEN_PROGRAM_ID)
+    const {
+      mint,
+      metadata: { name, symbol, uri, isMutable, updateAuthority },
+    } = await fetchDigitalAsset(umi, publicKey(tokenMintAddress))
+    const supply = mint.supply
+    const isFreezable = mint.freezeAuthority.__option !== 'None'
+    const isMintable = mint.mintAuthority.__option !== 'None'
+    // console.log(mint1)
+    // console.log(mint1.tlvData)
+    // if (!mintInfo) {
+    //   throw new Error('Mint not found')
+    // }
+    // const extensionData = getExtensionData(ExtensionType.MintCloseAuthority, mint1.tlvData)
+    // console.log(extensionData)
+    // const acc = await getAccount(connection, mintPublicKey, 'confirmed', TOKEN_PROGRAM_ID)
+    // console.log(getImmutableOwner(acc))
+
     // Check if the mint authority is null, indicating mintability
-    const mintAuthority = mintInfo.data.slice(8, 40)
-    const isMintable = mintAuthority.every((byte) => byte === 0)
+    // const mintAuthority = mintInfo.data.slice(8, 40)
+    // const isMintable = mintAuthority.every((byte) => byte === 0)
 
-    const freezeAuthority = mintInfo.data.slice(44, 76)
-    const isFreezable = freezeAuthority.every((byte) => byte === 0)
+    // const freezeAuthority = mintInfo.data.slice(44, 76)
+    // const isFreezable = freezeAuthority.every((byte) => byte === 0)
     // Check if the mutable data is null, indicating non-mutability
-    const mutableData = mintInfo.data.slice(76)
-    const isMutable = mutableData.every((byte) => byte === 0)
+    // const mutableData = mintInfo.data.slice(76)
+    // const isMutable = mutableData.every((byte) => byte === 0)
 
-    return {
-      isMintable,
-      isFreezable,
-      isMutable,
-    }
+    return { name, symbol, supply, isFreezable, isMintable, isMutable, uri, updateAuthority }
   } catch (error) {
     throw new Error(`Error fetching token supply: ${error}`)
   }
 }
+
+export async function getSignature(lpAddress: string) {
+  const lpKey = new PublicKey(lpAddress)
+
+  try {
+    let signatures = await connection.getSignaturesForAddress(lpKey)
+    // console.log(signatures)
+    let length = signatures.length
+    let sig = signatures[signatures.length - 1]
+
+    console.log(sig, length)
+    if (length < 1000) return sig
+    while (length == 1000) {
+      signatures = await connection.getSignaturesForAddress(lpKey, { before: sig.signature })
+      length = signatures.length
+      sig = signatures[signatures.length - 1]
+      console.log(sig, length)
+    }
+
+    return sig.signature
+  } catch (error) {
+    throw new Error(`Error fetching token supply: ${error}`)
+  }
+}
+
+// getSignature('EhoF52UXqCa4AhBrFBWcktQ58wsbb1YwPxt5HxtW4hfD')

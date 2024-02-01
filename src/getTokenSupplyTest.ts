@@ -1,4 +1,73 @@
+import { LIQUIDITY_STATE_LAYOUT_V4 } from '@raydium-io/raydium-sdk'
 import { getTotalTokenSupply, getTotalInfo } from './getTokenSupply'
+import { PublicKey } from '@solana/web3.js'
+import { connection } from '../config'
+
+export interface Root {
+  accountData: AccountDaum[]
+  description: string
+  events: Events
+  fee: number
+  feePayer: string
+  instructions: Instruction[]
+  nativeTransfers: NativeTransfer[]
+  signature: string
+  slot: number
+  source: string
+  timestamp: number
+  tokenTransfers: TokenTransfer[]
+  transactionError: any
+  type: string
+}
+
+export interface AccountDaum {
+  account: string
+  nativeBalanceChange: number
+  tokenBalanceChanges: TokenBalanceChange[]
+}
+
+export interface TokenBalanceChange {
+  mint: string
+  rawTokenAmount: RawTokenAmount
+  tokenAccount: string
+  userAccount: string
+}
+
+export interface RawTokenAmount {
+  decimals: number
+  tokenAmount: string
+}
+
+export interface Events {}
+
+export interface Instruction {
+  accounts: string[]
+  data: string
+  innerInstructions: InnerInstruction[]
+  programId: string
+}
+
+export interface InnerInstruction {
+  accounts: string[]
+  data: string
+  programId: string
+}
+
+export interface NativeTransfer {
+  amount: number
+  fromUserAccount: string
+  toUserAccount: string
+}
+
+export interface TokenTransfer {
+  fromTokenAccount: string
+  fromUserAccount: string
+  mint: string
+  toTokenAccount: string
+  toUserAccount: string
+  tokenAmount: number
+  tokenStandard: string
+}
 
 const obj1 = [
   {
@@ -517,26 +586,54 @@ const obj1 = [
   },
 ]
 
-const lpMarketId = obj1[0].accountData[2].account
-const quote = obj1[0].accountData[5].tokenBalanceChanges[0]
-const quoteMint = quote.mint
-const quoteData = quote.rawTokenAmount
-const base = obj1[0].accountData[6].tokenBalanceChanges[0]
-const baseMint = base.mint // 'So11111111111111111111111111111111111111112' assume sol
-const baseData = base.rawTokenAmount
-const lpToken = obj1[0].accountData[10].tokenBalanceChanges[0]
-const lpTokenMint = lpToken.mint
-const lpTokenData = lpToken.rawTokenAmount
-const timestamp = obj1[0].timestamp
+export const getTokenInfo = async (obj1: Root[]) => {
+  const lpMarketId = obj1[0].accountData[2].account
+  const info = await connection.getAccountInfo(new PublicKey(lpMarketId))
+  if (!info) return
+  const poolState = LIQUIDITY_STATE_LAYOUT_V4.decode(info.data)
+  const openTimeStamp = poolState.poolOpenTime.toNumber()
+  // const openTimeStamp2 = openTimeStamp * 1000
+  // const date = new Date(openTimeStamp2)
+  // console.log(`${date.toLocaleDateString()} ${date.toLocaleTimeString()}`)
+  // console.log(`${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`)
 
-console.log(lpMarketId, quoteMint, quoteData, baseMint, baseData)
+  const quote = obj1[0].accountData[5].tokenBalanceChanges[0]
+  const quoteMint = quote.mint
+  const quoteData = quote.rawTokenAmount
+  const base = obj1[0].accountData[6].tokenBalanceChanges[0]
+  const baseMint = base.mint // 'So11111111111111111111111111111111111111112' assume sol
+  const baseData = base.rawTokenAmount
+  const lpToken = obj1[0].accountData[10].tokenBalanceChanges[0]
+  const lpTokenMint = lpToken.mint
+  const lpTokenData = lpToken.rawTokenAmount
+  const timestamp = obj1[0].timestamp
+  const signature = obj1[0].signature
+
+  return {
+    lpMarketId,
+    quoteMint,
+    quoteData,
+    baseMint,
+    baseData,
+    lpTokenMint,
+    lpTokenData,
+    timestamp,
+    signature,
+    openTimeStamp,
+  }
+}
+
+getTokenInfo(obj1).then((data) => {
+  console.log(data)
+  if (!data) return
+  const quoteMintSupply = data?.quoteData.tokenAmount
+  getTotalInfo(data.quoteMint).then((d2) => {
+    console.log(d2)
+    console.log(parseFloat(quoteMintSupply) / Number(d2.supply))
+  })
+})
 // console.log(lpToken);
 
 // getTotalTokenSupply
-getTotalInfo(quoteMint)
-  .then((totalSupply) => {
-    console.log('Total Freeze Authority:', totalSupply)
-  })
-  .catch((error) => {
-    console.error('Error:', error.message)
-  })
+// BABAMn9NA8KwD5zxMWRn6dKvHjgUqrr7fpwwUtxA8oek
+// getTotalInfo('58UC31xFjDJhv1NnBF73mtxcsxN92SWjhYRzbfmvDREJ').then(console.log)
