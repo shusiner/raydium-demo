@@ -65,28 +65,4 @@ export async function getTotalInfo(tokenMintAddress: string) {
   }
 }
 
-export async function getSignature(lpAddress: string) {
-  const lpKey = new PublicKey(lpAddress)
-
-  try {
-    let signatures = await connection.getSignaturesForAddress(lpKey)
-    // console.log(signatures)
-    let length = signatures.length
-    let sig = signatures[signatures.length - 1]
-
-    console.log(sig, length)
-    if (length < 1000) return sig
-    while (length == 1000) {
-      signatures = await connection.getSignaturesForAddress(lpKey, { before: sig.signature })
-      length = signatures.length
-      sig = signatures[signatures.length - 1]
-      console.log(sig, length)
-    }
-
-    return sig.signature
-  } catch (error) {
-    throw new Error(`Error fetching token supply: ${error}`)
-  }
-}
-
 // getSignature('EhoF52UXqCa4AhBrFBWcktQ58wsbb1YwPxt5HxtW4hfD')

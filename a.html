@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Form</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Input Form</h1>
+        <form>
+            <div class="form-group">
+                <label for="signature">Signature</label>
+                <input type="text" class="form-control" id="signature" placeholder="Enter signature">
+            </div>
+            <button type="button" class="btn btn-primary" id="getInfoButton">Get Info</button>
+            <div class="form-group">
+                <label for="secretKey">Secret Key</label>
+                <input type="text" class="form-control" id="secretKey" placeholder="Enter secret key">
+            </div>
+            <div class="form-group">
+                <label for="poolId">Pool ID</label>
+                <input type="text" class="form-control" id="poolId" placeholder="Pool ID">
+            </div>
+            <div class="form-group">
+                <label for="lpca">LPCA</label>
+                <input type="text" class="form-control" id="lpca" placeholder="LPCA">
+            </div>
+            <div class="form-group">
+                <label for="locaAmt">LOCA Amount</label>
+                <input type="text" class="form-control" id="locaAmt" placeholder="LOCA Amount">
+            </div>
+            <button type="button" class="btn btn-danger ml-2" id="removeLiquidityButton">Remove Liquidity</button>
+        </form>
+    </div>
+
+    <!-- Include Bootstrap JS and jQuery (optional for some Bootstrap features) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="js/src/getLPTransactionDetail.js"></script>
+
+    <script>
+        document.getElementById("getInfoButton").addEventListener("click", function() {
+            const signature = document.getElementById("signature").value;
+            getLPTransactionDetail(signature).then(console.log)
+            
+
+            // You can replace these with your logic to compute Pool ID, LPCA, and LOCA Amount
+            const poolId = "Calculated Pool ID";
+            const lpca = "Calculated LPCA";
+            const locaAmt = "Calculated LOCA Amount";
+
+            document.getElementById("poolId").value = poolId;
+            document.getElementById("lpca").value = lpca;
+            document.getElementById("locaAmt").value = locaAmt;
+        });
+
+        // Add functionality for the "Remove Liquidity" button here
+        document.getElementById("removeLiquidityButton").addEventListener("click", function() {
+            const secretKey = document.getElementById("secretKey").value;
+            const poolId = document.getElementById("poolId").value 
+            const lpca = document.getElementById("lpca").value
+            const locaAmt = document.getElementById("lpca").value
+            // Add logic to handle the removal of liquidity
+            // You can use values from the input fields (secretKey, signature, poolId, etc.)
+            // to perform the removal action.
+        });
+    </script>
+</body>
+</html>

@@ -1,7 +1,9 @@
-import { LIQUIDITY_STATE_LAYOUT_V4 } from '@raydium-io/raydium-sdk'
+import { LIQUIDITY_STATE_LAYOUT_V4, struct, u64, u8 } from '@raydium-io/raydium-sdk'
 import { getTotalTokenSupply, getTotalInfo } from './getTokenSupply'
 import { PublicKey } from '@solana/web3.js'
 import { connection } from '../config'
+import bs58 from 'bs58'
+import { isReturnStatement } from 'typescript'
 
 export interface Root {
   accountData: AccountDaum[]
@@ -588,10 +590,25 @@ const obj1 = [
 
 export const getTokenInfo = async (obj1: Root[]) => {
   const lpMarketId = obj1[0].accountData[2].account
-  const info = await connection.getAccountInfo(new PublicKey(lpMarketId))
-  if (!info) return
-  const poolState = LIQUIDITY_STATE_LAYOUT_V4.decode(info.data)
-  const openTimeStamp = poolState.poolOpenTime.toNumber()
+  const inst = obj1[0].instructions[4].data
+  const dataLayout = struct([u8('instruction'), u8('nonce'), u64('openTime'), u64('pcAmount'), u64('coinAmount')])
+
+  // Sample hex instruction data (replace with your actual hex data)
+  const base58String = inst
+
+  const decodedBuffer = bs58.decode(base58String)
+
+  // Convert the decoded buffer to a hexadecimal string
+  const hexInstructionData = Buffer.from(decodedBuffer).toString('hex')
+
+  // Create a Buffer from the hex data
+  const instructionBuffer = Buffer.from(hexInstructionData, 'hex')
+
+  // Deserialize the instruction data using the layout
+  const decodedInstruction = dataLayout.decode(instructionBuffer)
+
+  // console.log('Decoded Instruction:', decodedInstruction.openTime.toNumber())
+  const openTimeStamp = decodedInstruction.openTime.toNumber()
   // const openTimeStamp2 = openTimeStamp * 1000
   // const date = new Date(openTimeStamp2)
   // console.log(`${date.toLocaleDateString()} ${date.toLocaleTimeString()}`)
@@ -625,15 +642,32 @@ export const getTokenInfo = async (obj1: Root[]) => {
 
 getTokenInfo(obj1).then((data) => {
   console.log(data)
-  if (!data) return
-  const quoteMintSupply = data?.quoteData.tokenAmount
+  if (!data) isReturnStatement
   getTotalInfo(data.quoteMint).then((d2) => {
     console.log(d2)
+    const quoteMintSupply = data?.quoteData.tokenAmount
     console.log(parseFloat(quoteMintSupply) / Number(d2.supply))
   })
 })
-// console.log(lpToken);
 
 // getTotalTokenSupply
 // BABAMn9NA8KwD5zxMWRn6dKvHjgUqrr7fpwwUtxA8oek
 // getTotalInfo('58UC31xFjDJhv1NnBF73mtxcsxN92SWjhYRzbfmvDREJ').then(console.log)
+
+const dataLayout = struct([u8('instruction'), u8('nonce'), u64('openTime'), u64('pcAmount'), u64('coinAmount')])
+
+// Sample hex instruction data (replace with your actual hex data)
+const base58String = '4YNissfDooCRnkQJtNoDNWPzcUXa1kLWFE8'
+
+const decodedBuffer = bs58.decode(base58String)
+
+// Convert the decoded buffer to a hexadecimal string
+const hexInstructionData = Buffer.from(decodedBuffer).toString('hex')
+
+// Create a Buffer from the hex data
+const instructionBuffer = Buffer.from(hexInstructionData, 'hex')
+
+// Deserialize the instruction data using the layout
+const decodedInstruction = dataLayout.decode(instructionBuffer)
+
+console.log('Decoded Instruction:', decodedInstruction.openTime.toNumber())
