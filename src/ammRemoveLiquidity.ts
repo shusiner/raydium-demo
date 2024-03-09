@@ -39,17 +39,18 @@ async function ammRemoveLiquidity(input: TestTxInputInfo) {
     },
     amountIn: input.removeLpTokenAmount,
     makeTxVersion,
+    computeBudgetConfig: { microLamports: 1000000 }, // change gas if necessary
   })
 
   return { txids: await buildAndSendTx(removeLiquidityInstructionResponse.innerTransactions) }
 }
 
-let lpToken = DEFAULT_TOKEN['RAY_USDC-LP'] // LP
-let targetPool = 'EVzLJhqMtdC1nPmz8rNd6xGfVjDPxpLZgq7XJuNfMZ6' // RAY-USDC pool
-let t1PubKey = new PublicKey('HLXX6wdcR9nrxMwo2iSiozWpLdVHx3FWviDM2M3tF4Yf') //Replace LP token ca
+let lpToken = DEFAULT_TOKEN['RAY_USDC-LP']
+let targetPool = 'EVzLJhqMtdC1nPmz8rNd6xGfVjDPxpLZgq7XJuNfMZ6'
+let t1PubKey = new PublicKey('CgP8WXRbV8gnHw2dZsg5Xw13gevXfCsnsPEzy2BH7Thx') //Replace LP token ca
 lpToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, '', '')
-targetPool = 'Hev8eETZLtbZ8WmB8s9ThxVmh6ZuUsrs2yBT2dr3gmMP' // Replace Pool ID
-const removeLpTokenAmount = new TokenAmount(lpToken, 3605550275463) // Replace token amt
+targetPool = '2armqjNqMLwVntzLLEqDp5JUaUHeLbiJB2Nhs2Cw4X47' // Replace Pool ID
+const removeLpTokenAmount = new TokenAmount(lpToken, 2024844673131) // Replace token amt
 
 async function howToUse() {
   const walletTokenAccounts = await getWalletTokenAccount(connection, wallet.publicKey)

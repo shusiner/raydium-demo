@@ -52,6 +52,7 @@ async function swapOnlyAmm(input: TestTxInputInfo) {
     amountOut: minAmountOut,
     fixedSide: 'in',
     makeTxVersion,
+    computeBudgetConfig: { microLamports: 200000, units: 600000 },
   })
 
   console.log('amountOut:', amountOut.toFixed(), '  minAmountOut: ', minAmountOut.toFixed())
@@ -69,18 +70,19 @@ async function swapOnlyAmm(input: TestTxInputInfo) {
 // let targetPool = 'EVzLJhqMtdC1nPmz8rNd6xGfVjDPxpLZgq7XJuNfMZ6' // USDC-RAY pool
 
 // parameters
-let outputToken = DEFAULT_TOKEN.WSOL 
+let outputToken = DEFAULT_TOKEN.WSOL
 let inputToken = DEFAULT_TOKEN.WSOL
-let targetPool = 'C8W1Y7R78WLvCeuGSsexP1ym1fisqvGfctunq86Phzdu' // change target pool
-let t1PubKey = new PublicKey('2Y3rQh4CbVqxS2u927pQNXKLou7xwzvXpLgmhKyjTcYr') // change token
+let targetPool = '2armqjNqMLwVntzLLEqDp5JUaUHeLbiJB2Nhs2Cw4X47' // change target pool
+let t1PubKey = new PublicKey('bcatA3uKh1uEbvfiLuBLwd9whq2Wy4pTvRyHgFNkSjQ') // change token
 // outputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'output', 'output')
 inputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'input', 'input')
-const inputTokenAmount = new TokenAmount(inputToken, 115000000e6) // change input amount
-const slippage = new Percent(200, 1000)
+const inputTokenAmount = new TokenAmount(inputToken, 30000000e6) // change input amount
+const slippage = new Percent(100, 1000) // 20%?
 // outputToken = DEFAULT_TOKEN.RAY
 
 async function howToUse() {
   const walletTokenAccounts = await getWalletTokenAccount(connection, wallet.publicKey)
+  console.log(walletTokenAccounts.map(({ accountInfo: { mint, amount } }) => ({ mint: mint.toString(), amount: amount.toNumber() })))
 
   swapOnlyAmm({
     outputToken,
@@ -94,6 +96,10 @@ async function howToUse() {
 
     console.log('txids', txids)
     console.log(`https://solscan.io/tx/${txids}`)
+    // setTimeout(async () => {
+    //   const walletTokenAccounts = await getWalletTokenAccount(connection, wallet.publicKey)
+    //   console.log(walletTokenAccounts.map(({ accountInfo: { mint, amount } }) => ({ mint, amount: amount.toNumber() })))
+    // }, 10000)
   })
 }
 

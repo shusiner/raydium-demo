@@ -12,5 +12,5 @@ export async function test1() {
 }
 
 // test1().then(getLPTransactionDetail).then(console.log)
-const str1 = '4zB6Mmp9Ne6jo1F4iJ7sbqWr4CwEYANn657HVXLXQwvsvZYXBPkdAEdTSt99gyyA8CCvP3e6HcdHhmtEb9KgYCc2'
+const str1 = '2Uuxm5Mf9n3wcpQahJkz9WQ8wzxnDHPJuf8dzjxG3Yzfp8sF9v4DUR5QXjZ7xpTcWHjavHUPJHd1eoQGqUsvnfQX'
 getLPTransactionDetail(str1).then(console.log)

@@ -71,6 +71,7 @@ async function ammCreatePool(input: TestTxInputInfo): Promise<{ txids: string[] 
     checkCreateATAOwner: true,
     makeTxVersion,
     feeDestinationId: new PublicKey('7YttLkHDoNj9wyDur5pM1ejNaAvT9X4eqaYcHQqtj2G5'), // only mainnet use this
+    computeBudgetConfig: { microLamports: 200000, units: 600000 },
   })
 
   return { txids: await buildAndSendTx(initPoolInstructionResponse.innerTransactions) }
@@ -81,11 +82,11 @@ async function howToUse() {
   let quoteToken = DEFAULT_TOKEN.RAY // RAY
   let targetMargetId = Keypair.generate().publicKey
 
-  targetMargetId = new PublicKey('5yPThK3qTq2tas3HsBYTYqBc3CLCASTz4vWZysAiPBcH') //replace market id
-  let t1PubKey = new PublicKey('Jy4opX8AyEBpr1ts2C4i2apMUoxup9qn9R8ypsboxYa') //replace base token, //wallet secret key
-  let addBaseAmount = new BN(1000000000e6) // 10000 / 10 ** 6,  //replace amt
-  let addQuoteAmount = new BN(13e9) // 10000 / 10 ** 6,  //replace sol
-  const startTime = Math.floor(Date.now() / 1000) + 100 //replace time
+  targetMargetId = new PublicKey('6vo1ipfTuq1oDPW7y4xUyYzEA4iFz154h9kv74V8cCQh') //replace market id
+  let t1PubKey = new PublicKey('bcatA3uKh1uEbvfiLuBLwd9whq2Wy4pTvRyHgFNkSjQ') //replace base token, //wallet secret key
+  let addBaseAmount = new BN(820000000e6) // 10000 / 10 ** 6,  //replace amt
+  let addQuoteAmount = new BN(5e9) // 10000 / 10 ** 6,  //replace sol
+  const startTime = Math.floor(Date.now() / 1000) + 120 //replace time
   baseToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'BASE', 'BASE')
   quoteToken = DEFAULT_TOKEN.WSOL
 
