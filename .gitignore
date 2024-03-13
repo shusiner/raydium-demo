@@ -6,3 +6,5 @@ yarn-error.log*
 config.ts
 js/
 env.ts
+data.txt
+data2.txt

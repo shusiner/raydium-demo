@@ -6,6 +6,7 @@ import { Keypair, PublicKey } from '@solana/web3.js'
 import { connection, DEFAULT_TOKEN, makeTxVersion, PROGRAMIDS, wallet } from '../config'
 import { buildAndSendTx, getWalletTokenAccount } from './util'
 import getLPTransactionDetail from './getLPTransactionDetail'
+import { writeJson } from './readJson'
 
 const ZERO = new BN(0)
 type BN = typeof ZERO
@@ -87,8 +88,7 @@ async function howToUse() {
   let addBaseAmount = new BN(800000000e6) // 10000 / 10 ** 6,  //replace amt
   // addBaseAmount = new BN(899999999e6) // 10000 / 10 ** 6,  //replace amt
   let addQuoteAmount = new BN(5e9) // 10000 / 10 ** 6,  //replace sol
-  let startTime = Math.floor(Date.now() / 1000) //replace time
-  // startTime = Math.floor(Date.now() / 1000) + 120 //replace time
+  let startTime = Math.floor(Date.now() / 1000) + 0 //replace time
   baseToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'BASE', 'BASE')
   quoteToken = DEFAULT_TOKEN.WSOL
 
@@ -119,6 +119,7 @@ async function howToUse() {
     const txid = txids[0]
     console.log('txids', txids)
     console.log(`https://solscan.io/tx/${txids}`)
+    writeJson({ txid }, 'data.txt')
     // if (txid)
     //   setTimeout(() => {
     //     getLPTransactionDetail(`${txid}`).then((d) => console.log(d))

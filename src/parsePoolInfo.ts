@@ -4,7 +4,7 @@ import { TokenAccount, SPL_ACCOUNT_LAYOUT, LIQUIDITY_STATE_LAYOUT_V4 } from '@ra
 import { OpenOrders } from '@project-serum/serum'
 import BN from 'bn.js'
 import { connection } from '../config'
-import { readJson } from './readJson'
+import { readJsonA } from './readJson'
 
 async function getTokenAccounts(connection: Connection, owner: PublicKey) {
   const tokenResp = await connection.getTokenAccountsByOwner(owner, {
@@ -26,13 +26,13 @@ async function getTokenAccounts(connection: Connection, owner: PublicKey) {
 // raydium pool id can get from api: https://api.raydium.io/v2/sdk/liquidity/mainnet.json
 // let SOL_USDC_POOL_ID = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
 let BASE_QUOTE_POOL_ID = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
-BASE_QUOTE_POOL_ID = 'KoLAkrhnnSuUbXuKKCoq91qhoBubYRZNn6Mz6Rft1BS' 
+BASE_QUOTE_POOL_ID = 'KoLAkrhnnSuUbXuKKCoq91qhoBubYRZNn6Mz6Rft1BS'
 BASE_QUOTE_POOL_ID = 'EVzLJhqMtdC1nPmz8rNd6xGfVjDPxpLZgq7XJuNfMZ6'
 BASE_QUOTE_POOL_ID = 'Cf628kRZSmUb5VZf6KGpRDRRxWRT8b4vLuYPEtLs73WD'
-// BASE_QUOTE_POOL_ID = '5QhCHadyqPnsuxtaWyRwrbMWwPojq3W7cL79zSf8QC2i' 
+// BASE_QUOTE_POOL_ID = '5QhCHadyqPnsuxtaWyRwrbMWwPojq3W7cL79zSf8QC2i'
 
 BASE_QUOTE_POOL_ID = '7NKJEjnmbo8CnwQHPVunPbQMqZtSDogej3RwY5rgEVV4' // replace pool id
-BASE_QUOTE_POOL_ID = readJson().poolId // replace pool id
+BASE_QUOTE_POOL_ID = readJsonA().poolId // replace pool id
 
 const OPENBOOK_PROGRAM_ID = new PublicKey('srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX')
 

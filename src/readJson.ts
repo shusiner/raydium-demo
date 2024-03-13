@@ -1,7 +1,20 @@
 import fs from 'fs'
-const filePath = 'data.txt'
 
-export function readJson() {
+export function writeJson(data: any, filePath: string) {
+  const keyValueString = Object.entries(data)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join('\n')
+  fs.writeFile(filePath, keyValueString, 'utf8', (err) => {
+    if (err) {
+      console.error('Error writing key-value pairs to file:', err)
+      return
+    }
+    console.log('Key-value pairs have been written to file successfully.')
+    return keyValueString
+  })
+}
+
+export function readJson(filePath: string) {
   try {
     // Read the content of the text file synchronously
     const data = fs.readFileSync(filePath, 'utf8')
@@ -13,6 +26,7 @@ export function readJson() {
       const [key, value] = line.split(':').map((item) => item.trim())
       jsonObject[key] = value
     })
+    console.log('Data from file:', jsonObject)
 
     return jsonObject
   } catch (err) {
@@ -21,7 +35,11 @@ export function readJson() {
   }
 }
 
-const jsonObject = readJson()
-if (jsonObject !== null) {
-  console.log(jsonObject)
-}
+export const readJsonA = readJson('data.txt')
+export const readJsonB = readJson('data2.txt')
+
+// const filePath = 'data.txt'
+// const jsonObject = readJson(filePath)
+// if (jsonObject !== null) {
+//   console.log(jsonObject)
+// }

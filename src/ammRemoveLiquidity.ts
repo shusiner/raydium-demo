@@ -13,7 +13,7 @@ import { Keypair, PublicKey } from '@solana/web3.js'
 import { connection, DEFAULT_TOKEN, makeTxVersion, wallet } from '../config'
 import { formatAmmKeysById } from './formatAmmKeysById'
 import { buildAndSendTx, getWalletTokenAccount } from './util'
-import { readJson } from './readJson'
+import { readJsonA } from './readJson'
 
 type WalletTokenAccounts = Awaited<ReturnType<typeof getWalletTokenAccount>>
 type TestTxInputInfo = {
@@ -48,10 +48,10 @@ async function ammRemoveLiquidity(input: TestTxInputInfo) {
 
 let lpToken = DEFAULT_TOKEN['RAY_USDC-LP']
 let targetPool = 'EVzLJhqMtdC1nPmz8rNd6xGfVjDPxpLZgq7XJuNfMZ6'
-let t1PubKey = new PublicKey(readJson().lpca) //Replace LP token ca
+let t1PubKey = new PublicKey(readJsonA.lpca) //Replace LP token ca
 lpToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, '', '')
-targetPool = readJson().poolId // Replace Pool ID
-let removeLpTokenAmount = new TokenAmount(lpToken, parseInt(readJson().lpcaAmt)) // Replace token amt
+targetPool = readJsonA.poolId // Replace Pool ID
+let removeLpTokenAmount = new TokenAmount(lpToken, parseInt(readJsonA.lpcaAmt)) // Replace token amt
 
 // t1PubKey = new PublicKey('742525M9exFKBNubWrHeS6FRqUh3sCv1674Y2yWc3DJv')
 // targetPool = '4PHtCBTSsZQpdDvGnednaUGwt7qQfmYEWeLAxPKYDMtJ'

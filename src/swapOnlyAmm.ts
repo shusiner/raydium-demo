@@ -14,7 +14,7 @@ import { Keypair, PublicKey } from '@solana/web3.js'
 import { connection, DEFAULT_TOKEN, makeTxVersion, wallet } from '../config'
 import { formatAmmKeysById } from './formatAmmKeysById'
 import { buildAndSendTx, getWalletTokenAccount } from './util'
-import { readJson } from './readJson'
+import { readJsonA } from './readJson'
 
 type WalletTokenAccounts = Awaited<ReturnType<typeof getWalletTokenAccount>>
 type TestTxInputInfo = {
@@ -73,8 +73,8 @@ async function swapOnlyAmm(input: TestTxInputInfo) {
 // parameters
 let outputToken = DEFAULT_TOKEN.WSOL
 let inputToken = DEFAULT_TOKEN.WSOL
-let targetPool = readJson().poolId // change target pool
-let t1PubKey = new PublicKey(readJson().mint) // change token
+let targetPool = readJsonA().poolId // change target pool
+let t1PubKey = new PublicKey(readJsonA().mint) // change token
 
 // outputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'output', 'output')
 inputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'input', 'input')
