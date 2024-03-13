@@ -4,6 +4,7 @@ import { TokenAccount, SPL_ACCOUNT_LAYOUT, LIQUIDITY_STATE_LAYOUT_V4 } from '@ra
 import { OpenOrders } from '@project-serum/serum'
 import BN from 'bn.js'
 import { connection } from '../config'
+import { readJson } from './readJson'
 
 async function getTokenAccounts(connection: Connection, owner: PublicKey) {
   const tokenResp = await connection.getTokenAccountsByOwner(owner, {
@@ -30,7 +31,8 @@ BASE_QUOTE_POOL_ID = 'EVzLJhqMtdC1nPmz8rNd6xGfVjDPxpLZgq7XJuNfMZ6'
 BASE_QUOTE_POOL_ID = 'Cf628kRZSmUb5VZf6KGpRDRRxWRT8b4vLuYPEtLs73WD'
 // BASE_QUOTE_POOL_ID = '5QhCHadyqPnsuxtaWyRwrbMWwPojq3W7cL79zSf8QC2i' 
 
-BASE_QUOTE_POOL_ID = '2armqjNqMLwVntzLLEqDp5JUaUHeLbiJB2Nhs2Cw4X47' // replace pool id
+BASE_QUOTE_POOL_ID = '7NKJEjnmbo8CnwQHPVunPbQMqZtSDogej3RwY5rgEVV4' // replace pool id
+BASE_QUOTE_POOL_ID = readJson().poolId // replace pool id
 
 const OPENBOOK_PROGRAM_ID = new PublicKey('srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX')
 

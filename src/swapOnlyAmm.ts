@@ -14,6 +14,7 @@ import { Keypair, PublicKey } from '@solana/web3.js'
 import { connection, DEFAULT_TOKEN, makeTxVersion, wallet } from '../config'
 import { formatAmmKeysById } from './formatAmmKeysById'
 import { buildAndSendTx, getWalletTokenAccount } from './util'
+import { readJson } from './readJson'
 
 type WalletTokenAccounts = Awaited<ReturnType<typeof getWalletTokenAccount>>
 type TestTxInputInfo = {
@@ -72,35 +73,62 @@ async function swapOnlyAmm(input: TestTxInputInfo) {
 // parameters
 let outputToken = DEFAULT_TOKEN.WSOL
 let inputToken = DEFAULT_TOKEN.WSOL
-let targetPool = '2armqjNqMLwVntzLLEqDp5JUaUHeLbiJB2Nhs2Cw4X47' // change target pool
-let t1PubKey = new PublicKey('bcatA3uKh1uEbvfiLuBLwd9whq2Wy4pTvRyHgFNkSjQ') // change token
+let targetPool = readJson().poolId // change target pool
+let t1PubKey = new PublicKey(readJson().mint) // change token
+
 // outputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'output', 'output')
 inputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'input', 'input')
-const inputTokenAmount = new TokenAmount(inputToken, 30000000e6) // change input amount
+const inputTokenAmount = new TokenAmount(inputToken, 10000000e6) // change input amount
 const slippage = new Percent(100, 1000) // 20%?
 // outputToken = DEFAULT_TOKEN.RAY
 
+const fetchMarketIdBaseOnCA = async (ca: string) => {
+  const options = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'User-Agent': 'Go-http-client/2.0',
+      authorization: 'v19e8e10c92b8de1209nce',
+      'Accept-Encoding': 'gzip',
+    },
+  }
+
+  const data = await fetch(`https://spl-token-data.vercel.app/api/hello3?ca=${ca}`, options)
+  const jsonData = await data.json()
+  // console.log(jsonData)
+  return jsonData.quoteMint.id
+}
+
 async function howToUse() {
   const walletTokenAccounts = await getWalletTokenAccount(connection, wallet.publicKey)
-  console.log(walletTokenAccounts.map(({ accountInfo: { mint, amount } }) => ({ mint: mint.toString(), amount: amount.toNumber() })))
+  // const promise = walletTokenAccounts.map(async ({ accountInfo: { mint, amount } }) => ({
+  //   mint: mint.toString(),
+  //   amount: amount.toNumber(),
+  //   market: await fetchMarketIdBaseOnCA(mint.toString()),
+  // }))
 
-  swapOnlyAmm({
-    outputToken,
-    targetPool,
-    inputTokenAmount,
-    slippage,
-    walletTokenAccounts,
-    wallet: wallet,
-  }).then(({ txids }) => {
-    /** continue with txids */
+  // const walletTokenAccounts2 = await Promise.all(promise)
+  // console.log(walletTokenAccounts2)
+  // console.log(walletTokenAccounts)
 
-    console.log('txids', txids)
-    console.log(`https://solscan.io/tx/${txids}`)
-    // setTimeout(async () => {
-    //   const walletTokenAccounts = await getWalletTokenAccount(connection, wallet.publicKey)
-    //   console.log(walletTokenAccounts.map(({ accountInfo: { mint, amount } }) => ({ mint, amount: amount.toNumber() })))
-    // }, 10000)
-  })
+  if (true)
+    swapOnlyAmm({
+      outputToken,
+      targetPool,
+      inputTokenAmount,
+      slippage,
+      walletTokenAccounts,
+      wallet: wallet,
+    }).then(({ txids }) => {
+      /** continue with txids */
+
+      console.log('txids', txids)
+      console.log(`https://solscan.io/tx/${txids}`)
+      // setTimeout(async () => {
+      //   const walletTokenAccounts = await getWalletTokenAccount(connection, wallet.publicKey)
+      //   console.log(walletTokenAccounts.map(({ accountInfo: { mint, amount } }) => ({ mint, amount: amount.toNumber() })))
+      // }, 10000)
+    })
 }
 
 howToUse()

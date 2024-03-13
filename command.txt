@@ -3,8 +3,9 @@
 yarn build
 yarn start js/src/ammCreatePool.js
 yarn build && yarn start js/src/getLPTransactionDetailExec.js
-yarn build && yarn start js/src/parsePoolInfo.js
+yarn start js/src/parsePoolInfo.js
 yarn start js/src/ammRemoveLiquidity.js
+yarn build && yarn start js/src/swapOnlyAmm.js
 yarn start js/src/swapOnlyAmm.js
 
 yarn build && yarn start js/src/parsePoolInfo.js
