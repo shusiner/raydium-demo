@@ -32,7 +32,7 @@ BASE_QUOTE_POOL_ID = 'Cf628kRZSmUb5VZf6KGpRDRRxWRT8b4vLuYPEtLs73WD'
 // BASE_QUOTE_POOL_ID = '5QhCHadyqPnsuxtaWyRwrbMWwPojq3W7cL79zSf8QC2i'
 
 BASE_QUOTE_POOL_ID = '7NKJEjnmbo8CnwQHPVunPbQMqZtSDogej3RwY5rgEVV4' // replace pool id
-BASE_QUOTE_POOL_ID = readJsonA().poolId // replace pool id
+BASE_QUOTE_POOL_ID = readJsonA.poolId // replace pool id
 
 const OPENBOOK_PROGRAM_ID = new PublicKey('srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX')
 

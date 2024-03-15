@@ -15,6 +15,7 @@ import { connection, DEFAULT_TOKEN, makeTxVersion, wallet } from '../config'
 import { formatAmmKeysById } from './formatAmmKeysById'
 import { buildAndSendTx, getWalletTokenAccount } from './util'
 import { readJsonA } from './readJson'
+import waitForTx from './waitForTx'
 
 type WalletTokenAccounts = Awaited<ReturnType<typeof getWalletTokenAccount>>
 type TestTxInputInfo = {
@@ -73,13 +74,17 @@ async function swapOnlyAmm(input: TestTxInputInfo) {
 // parameters
 let outputToken = DEFAULT_TOKEN.WSOL
 let inputToken = DEFAULT_TOKEN.WSOL
-let targetPool = readJsonA().poolId // change target pool
-let t1PubKey = new PublicKey(readJsonA().mint) // change token
+let targetPool = readJsonA.poolId // change target pool
+let t1PubKey = new PublicKey(readJsonA.mint) // change token
 
-// outputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'output', 'output')
-inputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'input', 'input')
-const inputTokenAmount = new TokenAmount(inputToken, 10000000e6) // change input amount
-const slippage = new Percent(100, 1000) // 20%?
+const swapTokenForSol = false
+if (swapTokenForSol) {
+  inputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'input', 'input')
+} else {
+  outputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'output', 'output')
+}
+const inputTokenAmount = new TokenAmount(inputToken, 0.01e9) // change input amount e6
+const slippage = new Percent(200, 1000) // 20%?
 // outputToken = DEFAULT_TOKEN.RAY
 
 const fetchMarketIdBaseOnCA = async (ca: string) => {
@@ -110,8 +115,12 @@ async function howToUse() {
   // const walletTokenAccounts2 = await Promise.all(promise)
   // console.log(walletTokenAccounts2)
   // console.log(walletTokenAccounts)
+  const sig = '5YBEogKRjG3Q8Dt5ECiYnytsTiVvZyk4rz467jUMGDzLTrnHjw93825UK9qsvP8E2WY4BJuKALgBEeemgQrfdeE4'
+  const waitTime = 10000
 
-  if (true)
+  await waitForTx(sig, waitTime)
+
+  if (false)
     swapOnlyAmm({
       outputToken,
       targetPool,

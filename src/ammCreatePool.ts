@@ -72,7 +72,7 @@ async function ammCreatePool(input: TestTxInputInfo): Promise<{ txids: string[] 
     checkCreateATAOwner: true,
     makeTxVersion,
     feeDestinationId: new PublicKey('7YttLkHDoNj9wyDur5pM1ejNaAvT9X4eqaYcHQqtj2G5'), // only mainnet use this
-    computeBudgetConfig: { microLamports: 400000, units: 1000000 },
+    computeBudgetConfig: { microLamports: 1000000, units: 2000000 },
   })
 
   return { txids: await buildAndSendTx(initPoolInstructionResponse.innerTransactions) }
@@ -83,8 +83,8 @@ async function howToUse() {
   let quoteToken = DEFAULT_TOKEN.RAY // RAY
   let targetMargetId = Keypair.generate().publicKey
 
-  targetMargetId = new PublicKey('BRhBcDLxTv7iiTFQcw3HCFqovtS5Mk3Wwbmytb33HM1g') //replace market id
-  let t1PubKey = new PublicKey('seCKbQoDk8ubVN9vcfpjF793py4Le6oY5u9iASSeGVD') //replace base token, //wallet secret key
+  targetMargetId = new PublicKey('Dbsqzc3Y5X7XxH5PsH5PsAiQsiNQ6kVhKnXRoLinxBeP') //replace market id
+  let t1PubKey = new PublicKey('TRoJQtG47AZ5oNdg623BZnHnj7A7G1AtTpB88CB3GQ2') //replace base token, //wallet secret key
   let addBaseAmount = new BN(800000000e6) // 10000 / 10 ** 6,  //replace amt
   // addBaseAmount = new BN(899999999e6) // 10000 / 10 ** 6,  //replace amt
   let addQuoteAmount = new BN(5e9) // 10000 / 10 ** 6,  //replace sol
@@ -104,27 +104,31 @@ async function howToUse() {
     quoteToken,
     targetMargetId,
   })
+  // test
+  // const txid = '5R1hLmmw8UrqVyfwjVrn6gVkLhjdatqfL36D3ncZEcjoqUiXzVMDo2y3bj2vuaeSK9LWBn7p4c7FuFZ4HaxRVitv'
+  // writeJson({ txid }, 'data2.txt')
 
-  ammCreatePool({
-    startTime,
-    addBaseAmount,
-    addQuoteAmount,
-    baseToken,
-    quoteToken,
-    targetMargetId,
-    wallet,
-    walletTokenAccounts,
-  }).then(({ txids }) => {
-    /** continue with txids */
-    const txid = txids[0]
-    console.log('txids', txids)
-    console.log(`https://solscan.io/tx/${txids}`)
-    writeJson({ txid }, 'data.txt')
-    // if (txid)
-    //   setTimeout(() => {
-    //     getLPTransactionDetail(`${txid}`).then((d) => console.log(d))
-    //   }, 15000)
-  })
+  if (true)
+    ammCreatePool({
+      startTime,
+      addBaseAmount,
+      addQuoteAmount,
+      baseToken,
+      quoteToken,
+      targetMargetId,
+      wallet,
+      walletTokenAccounts,
+    }).then(({ txids }) => {
+      /** continue with txids */
+      const txid = txids[0]
+      console.log('txids', txids)
+      console.log(`https://solscan.io/tx/${txids}`)
+      writeJson({ txid }, 'data2.txt')
+      // if (txid)
+      //   setTimeout(() => {
+      //     getLPTransactionDetail(`${txid}`).then((d) => console.log(d))
+      //   }, 15000)
+    })
 }
 
 howToUse()

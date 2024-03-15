@@ -15,6 +15,7 @@ export async function test1() {
 
 // test1().then(getLPTransactionDetail).then(console.log)
 const str1 = readJsonB.txid
+console.log(str1)
 getLPTransactionDetail(str1).then((data) => {
   if (!data.poolId) {
     console.error('No data returned from getLPTransactionDetail')
