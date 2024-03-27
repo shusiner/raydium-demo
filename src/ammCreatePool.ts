@@ -7,6 +7,8 @@ import { connection, DEFAULT_TOKEN, makeTxVersion, PROGRAMIDS, wallet } from '..
 import { buildAndSendTx, getWalletTokenAccount } from './util'
 import getLPTransactionDetail from './getLPTransactionDetail'
 import { writeJson } from './readJson'
+import waitForTx from './waitForTx'
+import waitForTxConfirmation from './waitForTxConfirmation'
 
 const ZERO = new BN(0)
 type BN = typeof ZERO
@@ -72,7 +74,7 @@ async function ammCreatePool(input: TestTxInputInfo): Promise<{ txids: string[] 
     checkCreateATAOwner: true,
     makeTxVersion,
     feeDestinationId: new PublicKey('7YttLkHDoNj9wyDur5pM1ejNaAvT9X4eqaYcHQqtj2G5'), // only mainnet use this
-    computeBudgetConfig: { microLamports: 1000000, units: 2000000 },
+    computeBudgetConfig: { microLamports: 3000000, units: 3000000 },
   })
 
   return { txids: await buildAndSendTx(initPoolInstructionResponse.innerTransactions) }
@@ -83,11 +85,11 @@ async function howToUse() {
   let quoteToken = DEFAULT_TOKEN.RAY // RAY
   let targetMargetId = Keypair.generate().publicKey
 
-  targetMargetId = new PublicKey('Dbsqzc3Y5X7XxH5PsH5PsAiQsiNQ6kVhKnXRoLinxBeP') //replace market id
-  let t1PubKey = new PublicKey('TRoJQtG47AZ5oNdg623BZnHnj7A7G1AtTpB88CB3GQ2') //replace base token, //wallet secret key
-  let addBaseAmount = new BN(800000000e6) // 10000 / 10 ** 6,  //replace amt
+  targetMargetId = new PublicKey('4fbqFMePkf4fMrsEbgp3uG6GXbxXpQRHoHfzC3LDBwiK') //replace market id
+  let t1PubKey = new PublicKey('5LerFFqPuSjwKvVsgQ1srPB5SdCnWtYj1TYSAsqxc2H3') //replace base token, //wallet secret key
+  let addBaseAmount = new BN(840000000e6) // 10000 / 10 ** 6,  //replace amt
   // addBaseAmount = new BN(899999999e6) // 10000 / 10 ** 6,  //replace amt
-  let addQuoteAmount = new BN(5e9) // 10000 / 10 ** 6,  //replace sol
+  let addQuoteAmount = new BN(9e9) // 10000 / 10 ** 6,  //replace sol
   let startTime = Math.floor(Date.now() / 1000) + 0 //replace time
   baseToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'BASE', 'BASE')
   quoteToken = DEFAULT_TOKEN.WSOL
@@ -118,12 +120,19 @@ async function howToUse() {
       targetMargetId,
       wallet,
       walletTokenAccounts,
-    }).then(({ txids }) => {
+    }).then(async ({ txids }) => {
       /** continue with txids */
       const txid = txids[0]
+      writeJson({ txid }, 'data2.txt')
+      const result = await waitForTxConfirmation(txid)
       console.log('txids', txids)
       console.log(`https://solscan.io/tx/${txids}`)
-      writeJson({ txid }, 'data2.txt')
+      if (!(result as any).err)
+        getLPTransactionDetail(`${txid}`).then((d) => {
+          writeJson(d, 'data.txt')
+          console.log(d)
+        })
+
       // if (txid)
       //   setTimeout(() => {
       //     getLPTransactionDetail(`${txid}`).then((d) => console.log(d))

@@ -2,7 +2,10 @@ import { connection } from '../config'
 import util from 'util'
 
 export default async function getLPTransactionDetail(sig: string) {
-  const sig3 = await connection.getParsedTransaction(sig, { maxSupportedTransactionVersion: 0 })
+  const sig3 = await connection.getParsedTransaction(sig, {
+    maxSupportedTransactionVersion: 0,
+    commitment: 'confirmed',
+  })
   //   const sig4 = await connection.getTransaction(sig2, { maxSupportedTransactionVersion: 0 }) // doesn't seems to have any difference
   const acc1s = sig3?.meta?.postTokenBalances
   // console.log(acc1s)

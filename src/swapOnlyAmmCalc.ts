@@ -15,8 +15,6 @@ import { connection, DEFAULT_TOKEN, makeTxVersion, wallet } from '../config'
 import { formatAmmKeysById } from './formatAmmKeysById'
 import { buildAndSendTx, getWalletTokenAccount } from './util'
 import { readJsonA } from './readJson'
-import waitForTx from './waitForTx'
-import waitForTxConfirmation from './waitForTxConfirmation'
 
 type WalletTokenAccounts = Awaited<ReturnType<typeof getWalletTokenAccount>>
 type TestTxInputInfo = {
@@ -66,9 +64,7 @@ async function swapOnlyAmm(input: TestTxInputInfo) {
     parseFloat(minAmountOut.toFixed()) * 1e9
   )
 
-  // return { txids: ['asd'] }
-
-  return { txids: await buildAndSendTx(innerTransactions) }
+  return {}
 }
 
 // inputToken = DEFAULT_TOKEN.USDC
@@ -80,14 +76,9 @@ let inputToken = DEFAULT_TOKEN.WSOL
 let targetPool = readJsonA.poolId // change target pool
 let t1PubKey = new PublicKey(readJsonA.mint) // change token
 
-const swapTokenForSol = true
-if (swapTokenForSol) {
-  inputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'input', 'input')
-} else {
-  outputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'output', 'output')
-}
-let inputTokenAmount = new TokenAmount(inputToken, 80000000e6) // change input amount e6
-// inputTokenAmount = new TokenAmount(inputToken, 0.000001e9) // change input amount e6
+outputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'output', 'output')
+// inputToken = new Token(TOKEN_PROGRAM_ID, t1PubKey, 6, 'input', 'input')
+const inputTokenAmount = new TokenAmount(inputToken, 0.001e9) // change input amount
 const slippage = new Percent(200, 1000) // 20%?
 // outputToken = DEFAULT_TOKEN.RAY
 
@@ -128,18 +119,6 @@ async function howToUse() {
       slippage,
       walletTokenAccounts,
       wallet: wallet,
-    }).then(async ({ txids }) => {
-      // const result = await waitForTxConfirmation(txids[0])
-      /** continue with txids */
-      // if (!(result as any).err) console.log('success')
-
-      console.log('txids', txids)
-      console.log(`https://solscan.io/tx/${txids}`)
-      // waitForTx(txids as any, 30000)
-      // setTimeout(async () => {
-      //   const walletTokenAccounts = await getWalletTokenAccount(connection, wallet.publicKey)
-      //   console.log(walletTokenAccounts.map(({ accountInfo: { mint, amount } }) => ({ mint, amount: amount.toNumber() })))
-      // }, 10000)
     })
 }
 
